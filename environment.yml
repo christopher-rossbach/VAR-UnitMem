@@ -1,0 +1,26 @@
+name: var-unitmem-env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - matplotlib
+  - pytz
+  - pillow
+  - pytorch==2.5.1
+  - torchvision==0.20.1
+  - torchaudio==2.5.1
+  - pytorch-cuda=12.4
+  - pandas
+  - jupyter
+  - ipykernel
+  - notebook
+  - nb_conda_kernels
+  - pip:
+      - huggingface_hub
+      - transformers
+      - typed-argument-parser
