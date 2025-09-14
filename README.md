@@ -1,4 +1,4 @@
-# Searching for Memorization in Visual Auto Regressive models using UnitMem
+# Searching for Memorization in Visual Autoregressive Models using UnitMem
 
 In this repository I search for memorization in [VAR-models](https://github.com/FoundationVision/VAR), to study where memorization in visual generative models happens.
 Specifically, I implement the **UnitMem** (slightly adjusted) for searching and quantifying memorization at the unit (neuron/channel) level in large-scale autoregressive models.
