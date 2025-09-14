@@ -7,8 +7,8 @@ I added a [Notebook](UnitMem.ipynb) and a small report to the original VAR repro
 
 ## References
 
-- [VAR Paper: Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction](https://arxiv.org/abs/2404.02905)
-- [UnitMem Paper: (add link when available)]
+- VAR Paper: [Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction](https://arxiv.org/abs/2404.02905)
+- UnitMem Paper: [Localizing Memorization in SSL Vision Encoders](https://arxiv.org/abs/2409.19069)
 
 
 ## License
