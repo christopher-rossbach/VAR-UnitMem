@@ -1,24 +1,22 @@
-@incollection{Bengio+chapter2007,
-author = {Bengio, Yoshua and LeCun, Yann},
-booktitle = {Large Scale Kernel Machines},
-publisher = {MIT Press},
-title = {Scaling Learning Algorithms Towards {AI}},
-year = {2007}
+@inproceedings{tianVisualAutoregressiveModeling2024,
+  title = {Visual {{Autoregressive Modeling}}: {{Scalable Image Generation}} via {{Next-Scale Prediction}}},
+  shorttitle = {Visual {{Autoregressive Modeling}}},
+  author = {Tian, Keyu and Jiang, Yi and Yuan, Zehuan and Peng, Bingyue and Wang, Liwei},
+  date = {2024-11-06},
+  url = {https://openreview.net/forum?id=gojL67CfS8},
+  urldate = {2025-09-01},
+  abstract = {We present Visual AutoRegressive modeling (VAR), a new generation paradigm that redefines the autoregressive learning on images as coarse-to-fine "next-scale prediction" or "next-resolution prediction", diverging from the standard raster-scan "next-token prediction". This simple, intuitive methodology allows autoregressive (AR) transformers to learn visual distributions fast and generalize well: VAR, for the first time, makes GPT-style AR models surpass diffusion transformers in image generation. On ImageNet 256x256 benchmark, VAR significantly improve AR baseline by improving Frechet inception distance (FID) from 18.65 to 1.73, inception score (IS) from 80.4 to 350.2, with around 20x faster inference speed. It is also empirically verified that VAR outperforms the Diffusion Transformer (DiT) in multiple dimensions including image quality, inference speed, data efficiency, and scalability. Scaling up VAR models exhibits clear power-law scaling laws similar to those observed in LLMs, with linear correlation coefficients near -0.998 as solid evidence. VAR further showcases zero-shot generalization ability in downstream tasks including image in-painting, out-painting, and editing. These results suggest VAR has initially emulated the two important properties of LLMs: Scaling Laws and zero-shot task generalization. We have released all models and codes to promote the exploration of AR/VAR models for visual generation and unified learning.},
+  eventtitle = {The {{Thirty-eighth Annual Conference}} on {{Neural Information Processing Systems}}},
+  langid = {english}
 }
 
-@article{Hinton06,
-author = {Hinton, Geoffrey E. and Osindero, Simon and Teh, Yee Whye},
-journal = {Neural Computation},
-pages = {1527--1554},
-title = {A Fast Learning Algorithm for Deep Belief Nets},
-volume = {18},
-year = {2006}
-}
-
-@book{goodfellow2016deep,
-title={Deep learning},
-author={Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron and Bengio, Yoshua},
-volume={1},
-year={2016},
-publisher={MIT Press}
+@inproceedings{wangLocalizingMemorizationSSL2024,
+  title = {Localizing {{Memorization}} in {{SSL Vision Encoders}}},
+  author = {Wang, Wenhao and Dziedzic, Adam and Backes, Michael and Boenisch, Franziska},
+  date = {2024-11-06},
+  url = {https://openreview.net/forum?id=R46HGlIjcG},
+  urldate = {2025-09-01},
+  abstract = {Recent work on studying memorization in self-supervised learning (SSL) suggests that even though SSL encoders are trained on millions of images, they still memorize individual data points. While effort has been put into characterizing the memorized data and linking encoder memorization to downstream utility, little is known about where the memorization happens inside SSL encoders. To close this gap, we propose two metrics for localizing memorization in SSL encoders on a per-layer (LayerMem) and per-unit basis (UnitMem). Our localization methods are independent of the downstream task, do not require any label information, and can be performed in a forward pass. By localizing memorization in various encoder architectures (convolutional and transformer-based) trained on diverse datasets with contrastive and non-contrastive SSL frameworks, we find that (1) while SSL memorization increases with layer depth, highly memorizing units are distributed across the entire encoder, (2) a significant fraction of units in SSL encoders experiences surprisingly high memorization of individual data points, which is in contrast to models trained under supervision, (3) atypical (or outlier) data points cause much higher layer and unit memorization than standard data points, and (4) in vision transformers, most memorization happens in the fully-connected layers. Finally, we show that localizing memorization in SSL has the potential to improve fine-tuning and to inform pruning strategies.},
+  eventtitle = {The {{Thirty-eighth Annual Conference}} on {{Neural Information Processing Systems}}},
+  langid = {english}
 }
