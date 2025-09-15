@@ -3,7 +3,7 @@
 In this repository I search for memorization in [VAR-models](https://github.com/FoundationVision/VAR), to study where memorization in visual generative models happens.
 Specifically, I implement the **UnitMem** (slightly adjusted) for searching and quantifying memorization at the unit (neuron/channel) level in large-scale autoregressive models.
 
-I added a [Notebook](UnitMem.ipynb) and a small report to the original VAR repro, from which this is forked.
+I added a [Notebook](UnitMem.ipynb) to generate grpahics and a short [report](report/out/report.pdf) about what I did to the original VAR repro, from which this is forked.
 
 ## References
 
