@@ -52,7 +52,7 @@ That means, we that we
 \end{enumerate}
 
 \section{Experiments}
-The Experiments are performed on the 16 blocks deep pretrained VAR model provided by \citet{tianVisualAutoregressiveModeling2024}\footnote{https://github.com/FoundationVision/VAR} which is trained on ImageNet \citep{dengImageNetLargeScaleHierarchical2009a} with 256x256 resolution.
+The Experiments are performed on the 16 blocks deep pretrained VAR model provided by \citet{tianVisualAutoregressiveModeling2024}\footnote{https://github.com/FoundationVision/VAR} which is trained on ImageNet with 256x256 resolution.
 We obtain our dataset $\mathcal{D}^\prime$ by sampling 256 images from 32 different classes\footnote{Experiments on the influence of the class on memorization may motivate a different split} of the ImageNet-1k training set.
 To approximate the expectation in equation \ref{eq:activation_mean}, we use 8 augmentations per image.\footnote{The only randomized augmentation used is random cropping from a 1.25x resized image, so 8 augmentations may be sufficient.}
 We restricted our search to the \texttt{attn.proj}, \texttt{ffn.fc1}, and \texttt{ffn.fc2} layers of each self-attention block, totaling to $16\cdot (1024 + 4096 + 1024) = 98,304$ units.
@@ -74,7 +74,7 @@ A very similar pattern can be observed when looking at the average \texttt{UnitM
 
 We also looked at the position \textit{within} a block, i.e. the layer type (\texttt{attn.proj}, \texttt{ffn.fc1} and \texttt{ffn.fc2}), and noted that the majority of higly memorizing units are located in the \texttt{ffn.fc1} layer, as shown in Figure \ref{fig:mem_units_per_layer_type}.
 This trend even holds true when adjusting for the fact that most of the units are located in the \texttt{ffn.fc1} layer (4096 out of 6144 units per block).
-When looking at the average \texttt{UnitMem} values per layer type (see Figure~\ref{fig:mem_avg_per_layer_type}), we see a more even distribution (see Figure~\ref{fig:mem_avg_per_layer_type}), indicating that \texttt{ffn.fc1} layers also contain a lot of low memorizing units.
+When looking at the average \texttt{UnitMem} values per layer type (see Figure~\ref{fig:mem_avg_per_layer_type}), we see a more even distribution, indicating that \texttt{ffn.fc1} layers also contain a lot of low memorizing units.
 Figure~\ref{fig:mem_max_per_layer_num} shows that the unit with maximal \texttt{UnitMem} value of each block is always found in the \texttt{ffn.fc1} layer.
 
 \subsection{Memorized Samples}
@@ -90,15 +90,14 @@ We find that a huge portion of these samples show a spacially repeating high fre
 
 We also (qualitatively) looked how the memorized samples differ depending on the block depth.
 For that we looked at the samples that are maximally activating the top 10 units (in terms of \texttt{UnitMem} value) in the \texttt{ffn.fc1} layer of blocks 0, 5, 10 and 15.
-While the samples for the blocks 0 and 5 are quite diverse, in block 10 7 out of 10 samples stem from the same class and in block 15 all top 10 \texttt{UnitMem} scores originate from the same image.
-\subsubsection{A Look at the Validation Set}
+While the samples for the blocks 0 and 5 are quite diverse, in block 10 7 out of 10 samples stem from the same class and in block 15 all top 10 \texttt{UnitMem} scores originate from the same image as can be seen in Figure~\ref{fig:mem_samples_per_layer}.
+\subsubsection{A Look at the Validation Set}\label{look_at_val}\footnote{This section is not yet fully verified.}
 For sanity check, we construct a dataset $\mathcal{D}_{val}$ of 256 images per class for the same 32 classes as above from the ImageNet-1k validation set.
 We use the data set $\mathcal{D}_{all} = \mathcal{D}_{val} \cup \mathcal{D}^\prime$ consisting of 16,384 images from the validation set and the images from the training set.
 
 We expect to see less memorization, for samples in $\mathcal{D}_{val}$ as the model was not trained on these images.\footnote{maybe it was?}
-Figure~\ref{fig:val_respon_num} shows that the number of \texttt{UnitMem} scores caused by samples from the validation set is FILL\footnote{higer, lower, same?} than for samples from the training set.
-Restricting the analysis to only the units in $\mathcal{U}_{10,\mathcal{D}_{all}}$ (obtained as in equation~\ref{eq:mem_units} but on $\mathcal{D}_{all}$) we see that this trend FILL\footnote{what will it do?}.
-We also compare the average \texttt{UnitMem} values caused by samples from $\mathcal{D}_{val}$ and $\mathcal{D}^\prime$ (see Figure~\ref{fig:val_respon_avg}).
+Figure~\ref{fig:val_respon_num} shows that the number of \texttt{UnitMem} scores caused by samples from the validation set is slightly higher than for samples from the training set.
+Restricting the analysis to only the units in $\mathcal{U}_{10,\mathcal{D}_{all}}$ (obtained as in equation~\ref{eq:mem_units} but on $\mathcal{D}_{all}$) we see that this trend increases.
 
 \section{Future Work}
 \begin{enumerate}
@@ -107,6 +106,7 @@ We also compare the average \texttt{UnitMem} values caused by samples from $\mat
    \item The same experiments should be performed on different model depths
    \item The influence of the class on memorization may be interesting to explore.
    \item Other relevant layers like \texttt{head} may also be interesting to look at.
+   \item The findings in~\ref{look_at_val} are unexpected and should be further investigated (they may not even be correct).
 \end{enumerate}
 
 
