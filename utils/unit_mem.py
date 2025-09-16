@@ -8,7 +8,6 @@ import os.path as osp
 def get_datasets(imagenet_path, num_per_class, classes, reps_per_image, final_reso=256, no_crop=False):
     # from utils.data build_dataset
     mid_reso=1.125
-    # build augmentations
     mid_reso = round(mid_reso * final_reso)  # first resize to mid_reso, then crop to final_reso
     resize = transforms.Compose(
         (
@@ -23,10 +22,8 @@ def get_datasets(imagenet_path, num_per_class, classes, reps_per_image, final_re
         ]
     )
 
-    # build dataset
     train_set = DatasetFolder(root=osp.join(imagenet_path, 'train'), loader=pil_loader, extensions=IMG_EXTENSIONS, transform=resize)
     val_set = DatasetFolder(root=osp.join(imagenet_path, 'val'), loader=pil_loader, extensions=IMG_EXTENSIONS, transform=resize)
-
 
     return (
         repeat_and_subset_per_class(train_set, num_per_class, classes, reps_per_image),
