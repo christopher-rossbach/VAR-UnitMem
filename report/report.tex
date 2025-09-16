@@ -29,8 +29,8 @@ Erlangen, 91058, Germany \\
 
 \begin{abstract}
 This work investigates memorization phenomena in visual autoregressive models (VAR), focusing on identifying and quantifying memorization at the unit (neuron/channel) level.
-By adapting the UnitMem methodology, I analyzed where memorization occurs within autoregressive models for images.
-More specifically, I analyzed at which depth and in which layer types of the self-attention blocks memorization occurs and which samples are most prone to be memorized.
+By adapting the UnitMem methodology, I analyzed where memorization occurs within autoregressive models for image generation.
+More specifically, I analyzed at which depth and in which layer types of the transformer blocks memorization occurs and which samples are most prone to be memorized.
 \end{abstract}
 \section{Methodology}
 I applied the UnitMem methodology \citep{wangLocalizingMemorizationSSL2024} to visual autoregressive models (VAR) \citep{tianVisualAutoregressiveModeling2024}.
@@ -40,36 +40,32 @@ The original UnitMem defines the mean activation of a unit $u$ on a sample $x$ a
     \mu_u(x) = \mathbb{E}_{x^\prime\sim\text{Aug}(x)}[\text{activation}_u(x^\prime)],
 \end{equation}
 where $\text{Aug}(x)$ is a probabilistic augmentation of $x$.
-I took the absolute value of the activation to account for the possible negative activations in VAR models and captured the excitement of a unit regardless of the sign and defined the mean activation as:
+I took the absolute value of the activation to account for the possible negative activations in VAR models to capture the excitement of a unit regardless of the sign and defined the mean activation as:
 \begin{equation}
    \label{eq:activation_mean}
     \mu_u(x) = \mathbb{E}_{x^\prime\sim\text{Aug}(x)}[|\text{activation}_u(x^\prime)|].
 \end{equation}
 Further, I used the VAR model in the same way as during training.
-That meant I
-\begin{enumerate}
-   \item supplied the model with $([s], e_1, e_2, ..., e_{n-1})$, where $[s]$ is the start token obtained from the label and $e_1, e_2, ..., e_{n}$ are the upscaled image token embeddings of the image $x$ obtained from the multi-scale token maps $(r_1, r_2, ..., r_{n-1})$, and
-   \item ran the model with teacher-forced inputs.
-\end{enumerate}
+That means I supplied the model with $([s], e_1, e_2, ..., e_{n-1})$, where $[s]$ is the start token obtained from the label and $e_1, e_2, ..., e_{n}$ are the upscaled image token embeddings of the image $x$ obtained from the multi-scale token maps $(r_1, r_2, ..., r_{n-1})$.
 
 \section{Experiments}
-The experiments were performed on the 16 blocks deep pretrained VAR model provided by \citet{tianVisualAutoregressiveModeling2024}\footnote{https://github.com/FoundationVision/VAR}, which is trained on ImageNet with 256x256 resolution.
-I obtained my dataset $\mathcal{D}^\prime$ by sampling 256 images from 32 different classes\footnote{Experiments on the influence of the class on memorization may motivate a different split} of the ImageNet-1k training set.
+The experiments were performed on the 16-block-deep pretrained VAR model provided by \citet{tianVisualAutoregressiveModeling2024}\footnote{https://github.com/FoundationVision/VAR}, which is trained on ImageNet with 256x256 resolution.
+I obtained my dataset $\mathcal{D}^\prime$ by sampling 256 images from each of 32 randomly chosen classes\footnote{Experiments on the influence of the class on memorization may motivate a different split} of the ImageNet-1k training set.
 To approximate the expectation in equation \ref{eq:activation_mean}, I used 8 augmentations per image.\footnote{The only randomized augmentation used is random cropping from a 1.25x resized image, so 8 augmentations may be sufficient.}
-I restricted my search to the \texttt{attn.proj}, \texttt{ffn.fc1}, and \texttt{ffn.fc2} layers of each self-attention block, totaling $16\cdot (1024 + 4096 + 1024) = 98,304$ units.
+I restricted my search to the \texttt{attn.proj}, \texttt{ffn.fc1}, and \texttt{ffn.fc2} layers of each transformer block, totaling $16\cdot (1024 + 4096 + 1024) = 98,304$ units.
 For each of the 8192 images in $\mathcal{D}^\prime$ I calculated the mean activation for each unit in the selected layers and stored the result.
 From that data, I calculated the $\texttt{UnitMem}_{\mathcal{D}^\prime}(u)$ for each unit $u$.
 \subsection{Localization}
-I defined the set of the units with the highest 10\% UnitMem values $U_{10}$ as:
+I defined highly memorizing units as the set of the units with the highest 10\% UnitMem values $U_{10}$:
 \begin{equation}\label{eq:mem_units}
    \mathcal{U}_{10} = \{u \in \mathcal{U} \mid\texttt{UnitMem}_{\mathcal{D}^\prime}(u) \geq P_{90}(\{\texttt{UnitMem}_{\mathcal{D}^\prime}(u) \mid u \in \mathcal{U}\})\},
 \end{equation}
 where $P_{90}$ is the 90th percentile function and $\mathcal{U}$ is the set of all units.
 For each $x \in \mathcal{D}^\prime$ I defined the number of highly memorizing units maximally activated by $x$ as:
-\[\text{NumMemUnits}(x) = |\{u \in \mathcal{U}_{10} \mid \mu_u(x) = \max(\{\mu_u(x^\prime) \mid x^\prime \in \mathcal{D}^\prime\})\}|.\]
+\[\text{NumMemUnits}(x) = \left|\left\{u \in \mathcal{U}_{10} \middle| x = \argmax_{x^\prime \in \mathcal{D}^\prime}\mu_u(x^\prime)\right\}\right|.\]
 
 I found that highly memorizing units are distributed over all blocks, as shown in Figure \ref{fig:mem_units_per_layer_num}.
-I noticed a strong decrease with increasing depth, except the last block, where memorization peaks again.
+I noticed a strong decrease with increasing depth, except for the last block, where memorization peaks again.
 Also, a wave pattern with local maxima at the block numbers 0, 5, 10, and 15 is visible.
 A very similar pattern can be observed when looking at the average \texttt{UnitMem} values over all units instead of the distribution of $\mathcal{U}_{10}$ (see Figure~\ref{fig:mem_avg_per_layer_num}).
 \begin{figure}[ht]
@@ -77,13 +73,13 @@ A very similar pattern can be observed when looking at the average \texttt{UnitM
    \begin{minipage}{0.48\textwidth}
       \centering
       \includegraphics[width=\textwidth]{figures/mem_units_per_layer_num.pdf}
-      \caption{Number of highly memorizing units per block.}
+      \caption{Number of highly memorizing units by depth and layer type.}
       \label{fig:mem_units_per_layer_num}
    \end{minipage}\hfill
    \begin{minipage}{0.48\textwidth}
       \centering
       \includegraphics[width=\textwidth]{figures/mem_avg_per_layer_num.pdf}
-      \caption{Average UnitMem values per block.}
+      \caption{Average UnitMem values by depth and layer type.}
       \label{fig:mem_avg_per_layer_num}
    \end{minipage}
 \end{figure}
@@ -111,7 +107,7 @@ Figure~\ref{fig:mem_max_per_layer_num} shows that the unit with maximal \texttt{
 \begin{figure}[ht]
    \centering
    \includegraphics[width=0.7\textwidth]{figures/mem_max_per_layer_num.pdf}
-   \caption{Layer type of the unit with maximal UnitMem value per block.}
+   \caption{Maximum \texttt{UnitMem} value by depth and layer type.}
    \label{fig:mem_max_per_layer_num}
 \end{figure}
 
@@ -120,14 +116,12 @@ My experiments showed that only a relatively small number of samples are respons
 Only about 27.2\% of the samples in $\mathcal{D}^\prime$ are responsible for the maximal activation of at least one unit in $\mathcal{U}_{10}$ (i.e., have a \texttt{NumMemUnits} value greater than 0).
 At the same time, already 1\% of the samples in $\mathcal{D}^\prime$ are responsible for the maximal activation of 49\% of the units in $\mathcal{U}_{10}$.
 10\% of the samples in $\mathcal{D}^\prime$ are responsible for the maximal activation of 83\% of the units in $\mathcal{U}_{10}$.
-\footnote{TODO: insert numbers from last experiments}
 \footnote{Additionally, undocumented experiments suggested that the portion of memorized samples may be even smaller when looking at a larger dataset $\mathcal{D}^\prime$.}
 
 I also looked at the samples that maximally activate the highest number of highly memorizing units, i.e., the samples with the highest \texttt{NumMemUnits} value, and performed a qualitative assessment.
 I found that a large portion of these samples show a spatially repeating high-frequency pattern or huge areas of constant color (see Figure \ref{fig:mem_samples}).
 
-I also (qualitatively) looked at how the memorized samples differ depending on the block depth.
-For that, I looked at the samples that maximally activate the top 10 units (in terms of \texttt{UnitMem} value) in the \texttt{ffn.fc1} layer of blocks 0, 5, 10, and 15.
+To examine how the memorized samples differ depending on the block depth, I looked at the samples that maximally activate the top 10 units (in terms of \texttt{UnitMem} value) in the \texttt{ffn.fc1} layer of blocks 0, 5, 10, and 15.
 While the samples for blocks 0 and 5 are quite diverse, in block 10, 7 out of 10 samples stem from the same class, and in block 15, all top 10 \texttt{UnitMem} scores originate from the same image, as can be seen in Figure~\ref{fig:mem_samples_per_layer}.
 
 \section{Future Work}
@@ -137,7 +131,7 @@ While the samples for blocks 0 and 5 are quite diverse, in block 10, 7 out of 10
    \item The same experiments should be performed on different model depths.
    \item The influence of the class on memorization may be interesting to explore.
    \item Other relevant layers like \texttt{head} may also be interesting to look at.
-   \item The findings in~\ref{look_at_val} are unexpected and should be further investigated (they may not even be correct).
+   \item The findings in~\ref{look_at_val} are unexpected and should be further investigated/thought about (they may not even be correct).
 \end{enumerate}
 
 
@@ -148,10 +142,9 @@ While the samples for blocks 0 and 5 are quite diverse, in block 10, 7 out of 10
 \newpage
 \appendix
 \section{Appendix}
-You may include other additional sections here.
 \subsection{A Look at the Validation Set}\label{look_at_val}\footnote{This section is not yet fully verified.}
 For sanity check, I constructed a dataset $\mathcal{D}_{val}$ of 256 images per class for the same 32 classes as above from the ImageNet-1k validation set.
-I used the data set $\mathcal{D}_{all} = \mathcal{D}_{val} \cup \mathcal{D}^\prime$ consisting of 16,384 images from the validation set and the images from the training set.
+I used the data set $\mathcal{D}_{all} = \mathcal{D}_{val} \cup \mathcal{D}^\prime$ consisting of 16,384 images to calculate the \texttt{UnitMem} values.
 
 I expected to see less memorization for samples in $\mathcal{D}_{val}$ as the model was not trained on these images.\footnote{maybe it was?}
 Figure~\ref{fig:val_respon_num} shows that the number of \texttt{UnitMem} scores caused by samples from the validation set is slightly higher than for samples from the training set.
