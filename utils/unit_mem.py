@@ -43,3 +43,25 @@ def repeat_and_subset_per_class(dataset, num_per_class, classes, repeats):
         for idx in selected:
             indices.extend([idx] * repeats) 
     return Subset(dataset, indices)
+
+def install_hooks(model, hook_filter=None, hook_fn=None):
+    return HookManager(model, hook_filter, hook_fn)
+
+class HookManager:
+    def __init__(self, model, hook_filter=None, hook_fn=None):
+        self.model = model
+        self.hook_filter = hook_filter
+        self.hook_fn = hook_fn
+        self.handles = []
+
+    def __enter__(self):
+        for module_name, module in self.model.named_modules():
+            if self.hook_filter and self.hook_filter(module_name, module):
+                handle = module.register_forward_hook(lambda m, i, o, name=module_name: self.hook_fn(m, i, o, name))
+                self.handles.append(handle)
+        return self.handles
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for h in self.handles:
+            h.remove()
+        self.handles = []
